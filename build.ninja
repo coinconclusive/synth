@@ -1,0 +1,14 @@
+clang_flags = -fdiagnostics-color
+cflags = -Iinclude -g -std=c++2b -Wno-c99-designator
+ldflags = -lasound
+
+rule cxx
+  command = clang++ $clang_flags $cflags -c $in -o $out -MMD -MF $out.d
+  depfile = $out.d
+
+rule lld
+  command = clang++ $clang_flags $ldflags $in -o $out
+
+build build/main.cpp.o: cxx main.cpp
+build build/qalsa.cpp.o: cxx qalsa.cpp
+build main: lld build/main.cpp.o build/qalsa.cpp.o
